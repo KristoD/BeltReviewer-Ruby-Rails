@@ -1,0 +1,85 @@
+<h1> Welcome, <%=@user.first_name%>!</h1> <a href="/user/<%=@user.id%>">Edit My Profile</a> | <a href="/logout" data-method="delete">Logout</a>
+
+<h3>Here are some of the events going on in your state: </h3>
+
+<table>
+    <thead>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Location</th>
+        <th>Host</th>
+        <th>Action/Status</th>
+    </thead>
+    <tbody>
+        <% @events.each do |event| %>
+            <% if event.state == @user.state %>
+                <tr>
+                    <td><a href="/events/<%=event.id%>"><%=event.name%></a></td>
+                    <td><%=event.date%></td>
+                    <td><%=event.city%></td>
+                    <td><%=event.host%></td>
+                    <% if event.user_id == @user.id %>
+                        <td><a href="/events/<%=event.id%>" data-method="delete">Delete</a></td>
+                    <% else %>
+                        <% if @user.joined_events.ids.include? event.id %>
+                            <td>Joined <a href="/join/<%=event.id%>/<%=@user.id%>" data-method="delete">Cancel</a></td>
+                        <% else %>
+                            <td><a href="/join/<%=event.id%>/<%=@user.id%>" data-method="post">Join</a></td>
+                        <% end %>
+                    <% end %>              
+                </tr>
+            <% end %>
+        <% end %>
+    </tbody>
+</table>
+
+<h3>Here are some of the events at other states: </h3>
+
+<table>
+    <thead>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Location</th>
+        <th>State</th>
+        <th>Host</th>
+        <th>Action</th>
+    </thead>
+    <tbody>
+        <% @events.each do |event| %>
+            <% if event.state != @user.state %>
+                <tr>
+                    <td><a href="/events/<%=event.id%>"><%=event.name%></a></td>
+                    <td><%=event.date%></td>
+                    <td><%=event.city%></td>
+                    <td><%=event.state%></td>
+                    <td><%=event.host%></td>
+                    <% if event.user_id == @user.id %>
+                        <td><a href="/events/<%=event.id%>" data-method="delete">Delete</a></td>
+                    <% else %>
+                        <% if @user.joined_events.ids.include? event.id %>
+                            <td>Joined <a href="/join/<%=event.id%>/<%=@user.id%>" data-method="delete">Cancel</a></td>
+                        <% else %>
+                            <td><a href="/join/<%=event.id%>/<%=@user.id%>" data-method="post">Join</a></td>
+                        <% end %>
+                    <% end %>  
+                </tr>
+            <% end %>
+        <% end %>
+    </tbody>
+</table>
+
+<h2>Add Event</h2>
+<form action="/events" method="POST">
+    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+    <p>Name: <input type="text" name="name"></p>
+    <p>Date: <input type="date" name="date"></p>
+    <p>Location: <input type="text" name="city">
+        <select name="state">
+            <option value="CA">CA</option>
+            <option value="WA">WA</option>
+            <option value="NY">NY</option>
+            <option value="IL">IL</option>
+        </select>
+    </p>
+    <input type="submit" value="Add Event">
+</form>
